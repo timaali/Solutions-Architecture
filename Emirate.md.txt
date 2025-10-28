@@ -1,0 +1,36 @@
+graph TD
+
+subgraph region [us-east-1 Region]
+subgraph Public Subnet
+ALB[Application Load Balancer]
+end
+
+subgraph Private Subnet
+ASG[Auto_scaling_Group]
+
+  subgraph AZ1 [Availability Zone 1]
+  EC21[Auto_scaling_EC2]
+end
+
+subgraph AZ2 [Availability Zone 2]
+EC22[Auto_scaling_EC2-1]
+  end
+RDS[Relational_DB]
+end
+end
+
+
+CF[CloudFront CDN]
+DDB[Dynamo_DB]
+S3[S3_Bucket]
+
+CF --> ALB
+ALB --> EC21
+ALB --> EC22
+EC21 --> DDB
+EC22 --> DDB
+CF --> S3
+EC21 --> RDS
+EC22 --> RDS
+EC21 --> ASG
+EC22 --> ASG
