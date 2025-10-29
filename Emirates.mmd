@@ -1,5 +1,12 @@
 graph TD
 
+CF@{ img: "https://api.iconify.design/logos/aws-cloudfront.svg", label: "CloudFront_CDN + WAF", pos: "b", w: 60, h: 60, constraint: "on" }
+IGW[Internet_Gateway]
+S3@{ img: "https://api.iconify.design/logos/aws-s3.svg", label: "S3_Bucket + EN", pos: "b", w: 60, h: 60, constraint: "on" }
+R53@{ img: "https://api.iconify.design/logos/aws-route53.svg", label: "Route_53", pos: "b", w: 60, h: 60, constraint: "on" }
+
+
+%% Region 1
 subgraph VPC [Virtual_Private_Cloud]
 subgraph region [us-east-1 Region]
 subgraph Public Subnet
@@ -22,22 +29,73 @@ end
 end
 end
 
-CF@{ img: "https://api.iconify.design/logos/aws-cloudfront.svg", label: "CloudFront_CDN + WAF", pos: "b", w: 60, h: 60, constraint: "on" }
-IGW[Internet_Gateway]
-S3@{ img: "https://api.iconify.design/logos/aws-s3.svg", label: "S3_Bucket + EN", pos: "b", w: 60, h: 60, constraint: "on" }
-
-CF --> ALB
 ALB --> EC21
 ALB --> EC22
 EC21 --> DDB
 EC22 --> DDB
-CF --> S3
 EC21 --> RDS
 EC22 --> RDS
 EC21 --> ASG
 EC22 --> ASG
 ALB --> IGW
+CF --> S3
 
+
+%% Region 2
+subgraph VPC-1 [Virtual_Private_Cloud2]
+subgraph region-1 [eu-west-1 Region]
+subgraph Public Subnet 1
+ALB-1@{ img: "https://api.iconify.design/logos/aws-elb.svg", label: "Application_LB + SG_1", pos: "b", w: 60, h: 60, constraint: "on" }
+end
+
+subgraph Private Subnet 1
+ASG-1[Auto_scaling_Group_1]
+
+  subgraph AZ1-1 [Availability Zone 1_1]
+  EC21-1@{ img: "https://api.iconify.design/logos/aws-ec2.svg", label: "EC2+SG_1", pos: "b", w: 60, h: 60, constraint: "on" }
+end
+
+subgraph AZ2-1 [Availability Zone 2_1]
+EC22-1@{ img: "https://api.iconify.design/logos/aws-ec2.svg", label: "EC2-1+SG_1", pos: "b", w: 60, h: 60, constraint: "on" }
+  end
+RDS-1@{ img: "https://api.iconify.design/logos/aws-rds.svg", label: "Relational_DB + EN_1", pos: "b", w: 60, h: 60, constraint: "on" }
+DDB-1@{ img: "https://api.iconify.design/logos/aws-dynamodb.svg", label: "Dynamo_DB + EN_1", pos: "b", w: 60, h: 60, constraint: "on" }
+end
+end
+end
+
+IGW-1[Internet_Gateway_1]
+S3-1@{ img: "https://api.iconify.design/logos/aws-s3.svg", label: "S3_Bucket + EN_1", pos: "b", w: 60, h: 60, constraint: "on" }
+
+%% eu-west-1 connections
+ALB-1 --> EC21-1
+ALB-1 --> EC22-1
+EC21-1 --> DDB-1
+EC22-1 --> DDB-1
+EC21-1 --> RDS-1
+EC22-1 --> RDS-1
+EC21-1 --> ASG-1
+EC22-1 --> ASG-1
+ALB-1 --> IGW-1
+CF --> S3-1
+
+%% Global connections
+CF --> ALB-1
+CF --> ALB
+CF --> R53
+
+%%Replication connections
+DDB <--> DDB-1
+S3 -.-> S3-1
+RDS -.-> RDS-1
+
+
+
+
+
+
+
+    
 
 
 
